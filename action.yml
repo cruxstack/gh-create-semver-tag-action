@@ -1,0 +1,61 @@
+name: Create SemVer Tag
+description: Calculate the next semantic version from Conventional Commits and create the tag.
+author: CruxStack
+branding:
+  icon: tag
+  color: blue
+
+inputs:
+  github-token:
+    description: Token with `contents:write` on the repository.
+    default: ${{ github.token }}
+  github-repository:
+    description: Repository to tag, as `owner/name`.
+    default: ${{ github.repository }}
+  tag-prefix:
+    description: Prefix placed before the version.
+    default: v
+  tag-target:
+    description: Full commit SHA to tag.
+    default: ${{ github.sha }}
+  tag-custom:
+    description: Exact version to use instead of calculating one. The prefix is optional.
+  tag-annotated:
+    description: Create an annotated tag instead of a lightweight one.
+    default: "false"
+  tag-message:
+    description: Annotated tag message. Defaults to the tag name.
+  bump-rules:
+    description: |
+      `type:bump[:Changelog Section]` entries, one per line or comma-separated. Merged over the
+      defaults `feat:minor`, `fix:patch`, `perf:patch` and `revert:patch`. `bump` is one of
+      major, minor, patch or none.
+  bump-default:
+    description: Bump when no commit matches a rule (major, minor, patch or none).
+    default: patch
+  bump-minimum:
+    description: Smallest bump applied when a release happens (major, minor, patch or none).
+    default: none
+  dry-run:
+    description: Calculate only; do not create the tag.
+    default: "false"
+
+outputs:
+  tag:
+    description: New tag, e.g. `v1.2.0`. Empty when no release is needed.
+  version:
+    description: New version without the prefix, e.g. `1.2.0`.
+  previous-tag:
+    description: Latest version tag before this one.
+  previous-version:
+    description: Latest version before this one.
+  bump:
+    description: Applied bump (major, minor, patch, none or custom).
+  changelog:
+    description: Markdown changelog of commits since the previous tag.
+  tag-created:
+    description: Whether this run created the tag.
+
+runs:
+  using: node24
+  main: dist/main.js
